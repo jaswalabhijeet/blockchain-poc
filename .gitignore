@@ -42,3 +42,6 @@ jspm_packages
 # private data
 profile.json
 config.json
+
+# temp files
+tmp/
