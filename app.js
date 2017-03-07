@@ -1,16 +1,21 @@
 'use strict';
 
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const express = require('express');
-const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
+const path = require('path');
+
+const app = express();
 
 const index = require('./routes/index');
 const users = require('./routes/users');
 
-const app = express();
+const config = require('./config');
+const blockchainSetup = config.getBlockchainSetup();
+
+const enrolledUser = blockchainSetup();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
