@@ -1,0 +1,27 @@
+{
+  "name": "blockchain-poc",
+  "version": "0.6.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.16.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.0",
+    "express": "~4.14.1",
+    "jade": "~1.11.0",
+    "morgan": "~1.7.0",
+    "serve-favicon": "~2.3.2"
+  },
+  "description": "Blockchain POC",
+  "main": "bin/www",
+  "keywords": [
+    "Blockchain",
+    "POC",
+    "Demo",
+    "Hyperledger"
+  ],
+  "author": "Persistent Systems Ltd",
+  "license": "MIT"
+}
