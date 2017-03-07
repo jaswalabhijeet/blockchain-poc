@@ -10,7 +10,5 @@ router.get('/', blockchainController.foo);
 
 router.get('/jim', blockchainController.queryJim);
 
-router.post('/initBlockchain', blockchainController.initBlockchain);
-
 
 module.exports = router;

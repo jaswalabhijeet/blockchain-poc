@@ -8,7 +8,10 @@ module.exports = {
   getChainName : () => {
     return keys.blockchainName;
   },
-  initBlockchain : () => {
-    return blockchainSetup.initBlockchain;
+  getBlockchainSetup : () => {
+    return blockchainSetup.configBlockchain;
+  },
+  getLocalIP: () => {
+  	return keys.localIP;
   }
 };
