@@ -7,7 +7,7 @@ const root = (req, res) => {
 };
 
 const queryJim = (req, res) => {
-  return res.send(foo);
+  return res.send("Query Something here");
 };
 
 module.exports = {
