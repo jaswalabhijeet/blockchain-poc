@@ -1,17 +1,19 @@
 'use strict';
 
 const keys = require('./keys');
-const blockchainSetup = require('./initBlockchain');
 
 
 module.exports = {
-  getChainName : () => {
+  getChaincodeIdFilePath: () => {
+    return keys.chaincodeIdFilePath
+  },
+  getChainName: () => {
     return keys.blockchainName;
   },
-  getBlockchainSetup : () => {
-    return blockchainSetup.configBlockchain;
+  getKeyValStorePath: () => {
+    return keys.keyValStorePath
   },
   getLocalIP: () => {
-  	return keys.localIP;
+    return keys.localIP;
   }
 };
