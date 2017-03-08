@@ -12,10 +12,9 @@ const app = express();
 const index = require('./routes/index');
 const users = require('./routes/users');
 
-const config = require('./config');
-const blockchainSetup = config.getBlockchainSetup();
+const setupBlockchain = require('./setup_files/initBlockchain');
 
-const enrolledUser = blockchainSetup();
+setupBlockchain.initBlockchain();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

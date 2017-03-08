@@ -1,6 +1,6 @@
 {
-  "chaincodeIdFilePath" : "./tmp/chaincodeId.txt",
+  "chaincodeIdFilePath" : "tmp/chaincodeId.txt",
   "blockchainName": "mycc",
-  "keyValStorePath": "./tmp/keyValStore",
+  "keyValStorePath": "tmp/keyValStore",
   "localIP": "10.244.48.144"
 }
