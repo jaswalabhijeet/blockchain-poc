@@ -1,0 +1,61 @@
+Register
+
+{
+  "enrollId": "WebAppAdmin",
+  "enrollSecret": "DJY27pEnl16d"
+}
+
+Deploy
+
+{
+  "jsonrpc": "2.0",
+  "method": "deploy",
+  "params": {
+    "type": 1,
+    "chaincodeID":{
+        "name": "mycc2"
+    },
+    "ctorMsg": {
+        "args":["init", "23"]
+    },
+      "secureContext":"WebAppAdmin"
+  },
+  "id": 5
+}
+
+Invoke
+
+{
+  "jsonrpc": "2.0",
+  "method": "invoke",
+  "params": {
+      "type": 1,
+      "chaincodeID":{
+          "name":"mycc2"
+      },
+      "ctorMsg": {
+         "args":["createContact", "Aaron", "Loutolim", "15"]
+      },
+      "secureContext":"WebAppAdmin"
+  },
+  "id": 3
+}
+
+
+Query 
+
+{
+  "jsonrpc": "2.0",
+  "method": "query",
+  "params": {
+      "type": 1,
+      "chaincodeID":{
+          "name":"mycc2"
+      },
+      "ctorMsg": {
+         "args":["readContact", "Amol"]
+      },
+      "secureContext":"WebAppAdmin"
+  },
+  "id": 5
+}
