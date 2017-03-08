@@ -2,15 +2,15 @@
 
 const hfc = require('hfc');
 
-const foo = (req, res) => {
+const root = (req, res) => {
   return res.send('Success');
 };
 
 const queryJim = (req, res) => {
-  return res.send('Query something here');
+  return res.send(foo);
 };
 
 module.exports = {
-  foo,
+  root,
   queryJim
 }

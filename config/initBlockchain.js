@@ -20,7 +20,7 @@ const tlsOn = (process.env.SDK_TLS == null) ? Boolean(false) : Boolean(parseInt(
 
 const configBlockchain = () => {
   const chain = hfc.newChain(keys.blockchainName);
-  chain.setKeyValStore(hfc.newFileKeyValStore('/tmp/keyValStore'));
+  chain.setKeyValStore(hfc.newFileKeyValStore(keys.keyValStorePath));
 
   try {
     chain.setMemberServicesUrl("grpc://" + localIP + ":7054");
@@ -32,7 +32,7 @@ const configBlockchain = () => {
 
     chain.setMemberServicesUrl("grpc://" + caAddr);
     chain.addPeer("grpc://" + peerAddr0);
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     console.log("\n *** Peer was already enrolled *** \n");
   }
@@ -59,13 +59,13 @@ const enrollUser = (chain) => {
 
     console.log("\n *** Enrolled user Jim successfully *** \n");
 
-    fs.exists("./tmp/chaincodeid.txt", function(exists) {
+    fs.exists(keys.chaincodeIdFilePath, function(exists) {
       if (!exists) {
         console.log('\n *** Deploying chaincode *** \n');
         return deployChaincode(enrolledUser);
       }
       console.log("\n *** Initial setup already done ***\n");
-      return enrolledUser;
+      return queryChaincode(enrolledUser);
     });
   })
 };
@@ -97,12 +97,14 @@ const deployChaincode = (enrolledUser) => {
 
     const testChaincodeID = results.chaincodeID;
 
-    fs.writeFile("./tmp/chaincodeid.txt", testChaincodeID, function(err) {
+    fs.writeFile(keys.chaincodeIdFilePath, testChaincodeID, function(err) {
       if (err) {
         return console.log(err);
       }
       console.log("\n *** Chaincode ID is written to file *** \n");
       console.log("\n *** Initial setup Completed *** \n");
+
+      return queryChaincode(enrolledUser);
     });
   });
 
@@ -110,8 +112,35 @@ const deployChaincode = (enrolledUser) => {
     console.log(err);
     throw err;
   });
+};
 
-  return enrolledUser;
+const queryChaincode = (enrolledUser) => {
+  let chaincodeID = '';
+
+  console.log("\n *** Querying chaincode to test *** \n");
+
+  const queryRequest = {
+    chaincodeID: keys.blockchainName,
+    fcn: "query",
+    args: ["a"]
+  };
+  const tx = enrolledUser.query(queryRequest);
+
+  tx.on('complete', function(results) {
+    console.log("\n *** Query completed successfully");
+    console.log("\n a = %s", results.result.toString('utf-8'));
+    console.log("\n Result of query; results=%j", results);
+
+    console.log("\n\n *** Blockchain Initialization complete *** \n\n")
+
+    return enrolledUser;
+
+  });
+
+  tx.on('error', function(error) {
+    console.log("\n *** Failed to query chaincode: request=%j, error=%k", queryRequest, error);
+    throw error;
+  });
 };
 
 
