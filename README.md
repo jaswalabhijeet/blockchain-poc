@@ -22,6 +22,12 @@ go build
 ```
 
 * Run Chaincode in dev mode or production mode
+
+  * For dev mode
+  ```console
+  CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 ./chaincode
+  ```
+
 Find detailed instructions [here](https://github.com/hyperledger/fabric/blob/v0.6/docs/Setup/Chaincode-setup.md)
 
 
