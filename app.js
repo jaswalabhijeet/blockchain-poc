@@ -9,11 +9,11 @@ const path = require('path');
 
 const app = express();
 
-const index = require('./routes/index');
-const users = require('./routes/users');
+// routes
+const index = require('./blockchain/router');
 
-const setupBlockchain = require('./setup_files/initBlockchain');
-
+// initialize blockchain
+const setupBlockchain = require('./blockchain/setup');
 setupBlockchain.initBlockchain();
 
 // view engine setup
@@ -29,7 +29,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

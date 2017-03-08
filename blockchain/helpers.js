@@ -6,15 +6,17 @@ const fs = require('fs');
 const config = require('../config');
 
 const localIP = config.getLocalIP();
+var chain = null;
 
+// TODO: clean imports - remove unused
 const deployMode = process.env.SDK_DEPLOY_MODE ? process.env.SDK_DEPLOY_MODE : "dev";
 const caAddr = process.env.SDK_MEMBERSRVC_ADDRESS ? process.env.SDK_MEMBERSRVC_ADDRESS : localIP + ":7054";
-const caCert = process.env.SDK_CA_CERT_FILE ? process.env.SDK_CA_CERT_FILE : "tlsca.cert";
-const caCertHost = process.env.SDK_CA_CERT_HOST ? process.env.SDK_CA_CERT_HOST : "";
+// const caCert = process.env.SDK_CA_CERT_FILE ? process.env.SDK_CA_CERT_FILE : "tlsca.cert";
+// const caCertHost = process.env.SDK_CA_CERT_HOST ? process.env.SDK_CA_CERT_HOST : "";
 const deployWait = process.env.SDK_DEPLOYWAIT ? process.env.SDK_DEPLOYWAIT : 20;
 const invokeWait = process.env.SDK_INVOKEWAIT ? process.env.SDK_INVOKEWAIT : 5;
 const peerAddr0 = process.env.SDK_PEER_ADDRESS ? process.env.SDK_PEER_ADDRESS : localIP + ":7051";
-const tlsOn = (process.env.SDK_TLS == null) ? Boolean(false) : Boolean(parseInt(process.env.SDK_TLS));
+// const tlsOn = (process.env.SDK_TLS == null) ? Boolean(false) : Boolean(parseInt(process.env.SDK_TLS));
 
 
 
@@ -22,9 +24,12 @@ const configBlockchain = () => {
 
   console.log("\n *** Configuring Blockchain *** \n");
 
-  const chain = hfc.newChain(config.getChainName());
+  // chain is global variable (in this file) so that we can reuse it
+  chain = hfc.newChain(config.getChainName());
   chain.setKeyValStore(hfc.newFileKeyValStore(__dirname + "/../" + config.getKeyValStorePath()));
 
+  // TODO: proper error control. Don't do in try catch.
+  // Check if peer has been reg before. only then register
   try {
     chain.setMemberServicesUrl("grpc://" + localIP + ":7054");
     chain.addPeer("grpc://" + localIP + ":7051");
@@ -59,9 +64,12 @@ const configBlockchain = () => {
   return chain;
 };
 
-const enrollUser = (chain, user) => {
+const enrollUser = (user) => {
 
   return new Promise((resolve, reject) => {
+    if (chain == null) {
+      return reject("Chain is not initialized yet");
+    }
     chain.enroll(user.name, user.secret, function(err, enrolledUser) {
       if (err) {
         throw Error("\nERROR: failed to enroll user : %s", user.name, err);
@@ -143,7 +151,7 @@ const queryChaincode = (enrolledUser, args) => { // `args` is `array`
 
       const queryRequest = {
         chaincodeID: data.toString(), // read from the file
-        fcn: "query",
+        fcn: "readContact",   // name of `function` parameter in `Query` in chaincode
         args
       };
 
@@ -166,7 +174,6 @@ const queryChaincode = (enrolledUser, args) => { // `args` is `array`
       });
     });
   });
-
 };
 
 

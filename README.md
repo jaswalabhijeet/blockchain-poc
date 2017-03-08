@@ -30,7 +30,18 @@ go build
 
 Find detailed instructions [here](https://github.com/hyperledger/fabric/blob/v0.6/docs/Setup/Chaincode-setup.md)
 
+* Start node application
+```console
+npm start
+```
 
+## Note
+* When deploying new docker containers, or starting a new network, delete old containers using ` docker rm $(docker ps -aq)`
+* Delete temp files
+```console
+rm tmp/chaincode.txt
+rm tmp/keyValStore/*
+```
 ## License
 
 MIT
