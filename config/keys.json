@@ -2,5 +2,5 @@
   "chaincodeIdFilePath" : "tmp/chaincodeId.txt",
   "blockchainName": "mycc",
   "keyValStorePath": "tmp/keyValStore",
-  "localIP": "10.244.48.144"
+  "localIP": "10.244.49.238"
 }

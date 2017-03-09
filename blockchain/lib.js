@@ -70,6 +70,7 @@ const enrollUser = (user) => {
     if (chain == null) {
       return reject("Chain is not initialized yet");
     }
+
     chain.enroll(user.name, user.secret, function(err, enrolledUser) {
       if (err) {
         console.log("\nERROR: failed to enroll user : %s", user.name, err);
@@ -93,16 +94,18 @@ const deployChaincode = (enrolledUser) => {
         return resolve(true);
       }
 
+      const args = [enrolledUser.name, "Test Contact", "The Shire", "42342353"];
+
       if (deployMode === "dev") {
         deployRequest = {
           fcn: "init",
-          args: ["a", "100", "b", "200"],
+          args,
           chaincodeName: config.getChainName()
         };
       } else {
         deployRequest = {
           fcn: "init",
-          args: ["a", "100", "b", "200"],
+          args,
           chaincodePath: "../chaincode/chaincode"
         };
       }
@@ -139,6 +142,9 @@ const invokeChaincode = (enrolledUser, functionToInvoke, args) => {
   let chaincodeID = '';
 
   return new Promise((resolve, reject) => {
+    if (args.length < 4) {
+      return reject("Length of args < 4");
+    }
     fs.readFile(__dirname + "/../" + config.getChaincodeIdFilePath(), (err, data) => {
       if (err) {
         console.log("\n Error: ", err);

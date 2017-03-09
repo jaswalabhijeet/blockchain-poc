@@ -8,9 +8,14 @@ const queryChaincode = blockchainLib.getQueryChaincode();
 
 const createContact = (req, res) => {
 
-  const user = {
+  /*const user = {
     "name": req.body.user.name,
     "secret": req.body.user.secret
+  };*/
+
+  const user = {
+    "name": 'jim',
+    "secret": '6avZQLwcUe9b'
   };
 
   const contact = {
@@ -21,7 +26,7 @@ const createContact = (req, res) => {
 
   enrollUser(user)
     .then((enrolledUser) => {
-      return invokeChaincode(enrolledUser, "createContact", [contact.name, contact.address, contact.number]);
+      return invokeChaincode(enrolledUser, "createContact", [user.name, contact.name, contact.address, contact.number]);
     })
     .then((createdContact) => {
       return res.status(201).json(createdContact);
@@ -34,29 +39,27 @@ const createContact = (req, res) => {
 
 const getAllContacts = (req, res) => {
 
-  const user = {
+  /*const user = {
     "name": req.body.user.name,
     "secret": req.body.user.secret
-  };
+  };*/
 
-  const contact = {
-    "name": req.body.contact.name,
-    "address": req.body.contact.address,
-    "number": req.body.contact.number
+  const user = {
+    "name": 'jim',
+    "secret": '6avZQLwcUe9b'
   };
 
   enrollUser(user)
     .then((enrolledUser) => {
-      return queryChaincode(enrolledUser, "readContact", [contact.name]);
+      return queryChaincode(enrolledUser, "readContacts", [user.name]);
     })
-    .then((createdContact) => {
-      return res.status(201).json(createdContact);
+    .then((returnedContacts) => {
+      return res.status(200).json(JSON.parse(returnedContacts.result.toString('utf-8')));
     })
     .catch((err) => {
-      console.log("\n *** Error creating contact:", err);
+      console.log("\n *** Error reading contact:", err);
       return res.status(500).end("Something went wrong. Check console");
     });
-  return res.send('Success');
 };
 
 const getContactById = (req, res) => {

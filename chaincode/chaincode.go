@@ -4,7 +4,6 @@ import (
   "encoding/json"
   "fmt"
   "errors"
-  "strconv"
   "github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -19,34 +18,37 @@ type Contact struct{
 
 // Init : Adds initial block to chaincode on blockchain network
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-  var A, B string    // Entities
-  var Aval, Bval int // Asset holdings
-  var err error
-
   if len(args) != 4 {
-    return nil, errors.New("Incorrect number of arguments. Expecting 4")
+    return nil, errors.New("Incorrect number of arguments. Expected 4 arguments")
   }
 
-  // Initialize the chaincode
-  A = args[0]
-  Aval, err = strconv.Atoi(args[1])
-  if err != nil {
-    return nil, errors.New("Expecting integer value for asset holding")
-  }
-  B = args[2]
-  Bval, err = strconv.Atoi(args[3])
-  if err != nil {
-    return nil, errors.New("Expecting integer value for asset holding")
-  }
-  fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
+  var err error
+  // Reference to struct
+  newContact := new(Contact)
+  retrievedContactsArray := []*Contact{}
 
-  // Write the state to the ledger
-  err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+  //Set key
+  var ownerName = args[0]
+
+  newContact.Name = args[1]
+  newContact.Address = args[2]
+  newContact.Number = args[3]
+
+  // Get owner's state from blockchain network
+  valAsBytes, _ := stub.GetState(ownerName)
+  json.Unmarshal(valAsBytes, &retrievedContactsArray)  // may be `&retrievedContactsArray`
+
+  retrievedContactsArray = append(retrievedContactsArray, newContact)
+
+  // Convert to bytes and store in blockchain
+
+  bytes, err := json.Marshal(retrievedContactsArray)
   if err != nil {
-    return nil, err
+    fmt.Println(err)
+    return nil,err
   }
 
-  err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+  err = stub.PutState(ownerName, bytes)
   if err != nil {
     return nil, err
   }

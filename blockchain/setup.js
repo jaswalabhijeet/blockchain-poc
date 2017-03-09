@@ -35,12 +35,12 @@ const initBlockchain = () => {
     })
     .then((deployedFlag) => {
       console.log("\n *** Querying chaincode to test *** \n");
-      return blockchainLib.queryChaincode(enrolledUser, "readContact", ["a"]);
+      return blockchainLib.queryChaincode(enrolledUser, "readContacts", [enrolledUser.name]);
     })
     .then((results) => {
       console.log("\n *** Query completed successfully ***\n");
       console.log("\n", results.result.toString('utf-8'));
-      console.log("\n Result of query; results=%j", results);
+      console.log("\n Result of query; results=", results);
 
       console.log("\n\n *** Blockchain Initialization complete *** \n\n");
     })
