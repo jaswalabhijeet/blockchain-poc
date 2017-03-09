@@ -1,20 +1,20 @@
 package main
 
 import (
-    "encoding/json"
-    "fmt"
-    "errors"
-    "strconv"
-    "github.com/hyperledger/fabric/core/chaincode/shim"
+  "encoding/json"
+  "fmt"
+  "errors"
+  "strconv"
+  "github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 type SimpleChaincode struct{
 }
 
-type Owner struct{
-  Name  string  `json:"Name"`
-  Address string  `json:"Address"`
-  Numbers[] int64  `json:"Numbers"`
+type Contact struct{
+  Name  string  `json:"name"`
+  Address string  `json:"address"`
+  Number string  `json:"number"`
 }
 
 // Init : Adds initial block to chaincode on blockchain network
@@ -58,10 +58,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 // Invoke : Adds a new block to the blockchain network
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
   if function == "init" {
-    // Initial block - Puts 'abc' and '99'
     return t.Init(stub, "init", args)
   } else if function == "createContact" {
-    // Pushes property details to Blockchain network
     return t.createContact(stub, args)
   }
 
@@ -71,71 +69,66 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 func (t *SimpleChaincode) createContact(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
-  if len(args) != 3 {
-    return nil, errors.New("Incorrect number of arguments. Expected 3 arguments")
+  if len(args) != 4 {
+    return nil, errors.New("Incorrect number of arguments. Expected 4 arguments")
   }
 
   var err error
   // Reference to struct
-  var owner Owner
+  newContact := new(Contact)
+  retrievedContactsArray := []*Contact{}
 
   //Set key
   var ownerName = args[0]
-  owner.Name = ownerName
 
-  var addressValue = args[1]
-  owner.Address = addressValue
-
-  var contactValue int64
-  contactValue, _ = strconv.ParseInt(args[2], 10, 64)
+  newContact.Name = args[1]
+  newContact.Address = args[2]
+  newContact.Number = args[3]
 
   // Get owner's state from blockchain network
   valAsBytes, _ := stub.GetState(ownerName)
-  var retrieveNumbers Owner
-  json.Unmarshal(valAsBytes, &retrieveNumbers)
+  json.Unmarshal(valAsBytes, retrievedContactsArray)  // may be `&retrievedContactsArray`
 
-  owner.Numbers = append(retrieveNumbers.Numbers,contactValue)
-
-  //owner.Number = contactValue
+  retrievedContactsArray = append(retrievedContactsArray, newContact)
 
   // Convert to bytes and store in blockchain
 
-  bytes,_ := json.Marshal(owner)
-  err = stub.PutState(ownerName, bytes)
-
+  bytes, err := json.Marshal(retrievedContactsArray)
   if err != nil {
-    return nil, errors.New("Putstate failed")
+    fmt.Println(err)
+    return nil,err
   }
 
-  return nil,nil
+  err = stub.PutState(ownerName, bytes)
+  if err != nil {
+    return nil, err
+  }
+
+  return nil, nil
 }
 
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
   fmt.Println("query is running " + function)
 
   // Handle different functions
-  if function == "readContact" {
-    return t.readContact(stub, args)
+  if function == "readContacts" {
+    return t.readContacts(stub, args)
   }
 
   return nil, errors.New("Received unknown function query: " + function)
 }
 
 
-func (t *SimpleChaincode) readContact(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *SimpleChaincode) readContacts(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
   if len(args) != 1 {
-    return nil, errors.New("Invalid numbers of arguments. Expected ")
+    return nil, errors.New("Invalid numbers of arguments. Expected 1")
   }
 
-  var ownerName = args[0]
-
-  var owner Owner
+  ownerName := args[0]
 
   valAsBytes,_ := stub.GetState(ownerName)
 
-  json.Unmarshal(valAsBytes,&owner)
-
-  return valAsBytes,nil
+  return valAsBytes, nil
 }
 
 func main() {
