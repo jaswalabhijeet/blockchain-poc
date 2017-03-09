@@ -14,7 +14,7 @@ type SimpleChaincode struct{
 type Owner struct{
   Name  string  `json:"Name"`
   Address string  `json:"Address"`
-  Number int64  `json:"Number"`
+  Numbers[] int64  `json:"Numbers"`
 }
 
 // Init : Adds initial block to chaincode on blockchain network
@@ -88,7 +88,15 @@ func (t *SimpleChaincode) createContact(stub shim.ChaincodeStubInterface, args [
 
   var contactValue int64
   contactValue, _ = strconv.ParseInt(args[2], 10, 64)
-  owner.Number = contactValue
+
+  // Get owner's state from blockchain network
+  valAsBytes, _ := stub.GetState(ownerName)
+  var retrieveNumbers Owner
+  json.Unmarshal(valAsBytes, &retrieveNumbers)
+
+  owner.Numbers = append(retrieveNumbers.Numbers,contactValue)
+
+  //owner.Number = contactValue
 
   // Convert to bytes and store in blockchain
 
