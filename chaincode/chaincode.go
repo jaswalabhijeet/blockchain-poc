@@ -87,7 +87,7 @@ func (t *SimpleChaincode) createContact(stub shim.ChaincodeStubInterface, args [
 
   // Get owner's state from blockchain network
   valAsBytes, _ := stub.GetState(ownerName)
-  json.Unmarshal(valAsBytes, retrievedContactsArray)  // may be `&retrievedContactsArray`
+  json.Unmarshal(valAsBytes, &retrievedContactsArray)  // may be `&retrievedContactsArray`
 
   retrievedContactsArray = append(retrievedContactsArray, newContact)
 
