@@ -200,5 +200,6 @@ module.exports = {
   configBlockchain,
   enrollUser,
   deployChaincode,
+  invokeChaincode,
   queryChaincode
 }

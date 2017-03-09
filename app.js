@@ -11,6 +11,7 @@ const app = express();
 
 // routes
 const index = require('./blockchain/router');
+const contactBook = require('./contact_book/router');
 
 // initialize blockchain
 const setupBlockchain = require('./blockchain/setup');
@@ -29,6 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/api/contact-book', contactBook);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
