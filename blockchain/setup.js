@@ -8,12 +8,12 @@
 
 'use strict';
 
-const blockchainHelpers = require('./helpers');
+const blockchainLib = require('./lib');
 
 const initBlockchain = () => {
 
   // 1. configure blockchain values
-  const chain = blockchainHelpers.configBlockchain();
+  const chain = blockchainLib.configBlockchain();
 
   // 2. enroll user Jim
   const user = {
@@ -23,17 +23,26 @@ const initBlockchain = () => {
 
   let enrolledUser = null;
 
-  blockchainHelpers.enrollUser(user)
+  blockchainLib.enrollUser(user)
     .then((user) => {
       enrolledUser = user;
+      console.log("\n *** Enrolled user %s successfully *** \n", user.name);
       return enrolledUser;
     })
     .then((enrolledUser) => {
       // 3. deploy chaincode using `enrolledUser`
-      return blockchainHelpers.deployChaincode(enrolledUser);
+      return blockchainLib.deployChaincode(enrolledUser);
     })
     .then((deployedFlag) => {
-      blockchainHelpers.queryChaincode(enrolledUser, "readContact", ["a"]);
+      console.log("\n *** Querying chaincode to test *** \n");
+      return blockchainLib.queryChaincode(enrolledUser, "readContact", ["a"]);
+    })
+    .then((results) => {
+      console.log("\n *** Query completed successfully ***\n");
+      console.log("\n", results.result.toString('utf-8'));
+      console.log("\n Result of query; results=%j", results);
+
+      console.log("\n\n *** Blockchain Initialization complete *** \n\n");
     })
     .catch((err) => {
       console.log("\n *** ERROR in blockcain `setup.js` ***\n", err);

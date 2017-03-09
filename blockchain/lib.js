@@ -75,9 +75,6 @@ const enrollUser = (user) => {
         console.log("\nERROR: failed to enroll user : %s", user.name, err);
         return reject(err);
       }
-
-      console.log("\n *** Enrolled user %s successfully *** \n", user.name);
-
       return resolve(enrolledUser);
     });
   });
@@ -138,10 +135,38 @@ const deployChaincode = (enrolledUser) => {
   });
 };
 
-const queryChaincode = (enrolledUser, functionToQuery, args) => { // `args` is `array`
+const invokeChaincode = (enrolledUser, functionToInvoke, args) => {
   let chaincodeID = '';
 
-  console.log("\n *** Querying chaincode to test *** \n");
+  return new Promise((resolve, reject) => {
+    fs.readFile(__dirname + "/../" + config.getChaincodeIdFilePath(), (err, data) => {
+      if (err) {
+        console.log("\n Error: ", err);
+        return reject(err);
+      }
+
+      const invokeRequest = {
+        chaincodeID: data.toString(), // read from the file
+        fcn: functionToInvoke, // name of `function` parameter in `Invoke` in chaincode
+        args
+      };
+
+      const invokeTx = enrolledUser.invoke(invokeRequest);
+
+      invokeTx.on('complete', function(results) {
+        return resolve(results);
+      });
+
+      invokeTx.on('error', function(err) {
+        console.log("\n *** Failed to invoke chaincode: request=%j, error=%k", invokeRequest, err);
+        return reject(err);
+      });
+    });
+  });
+};
+
+const queryChaincode = (enrolledUser, functionToQuery, args) => { // `args` is `array`
+  let chaincodeID = '';
 
   return new Promise((resolve, reject) => {
     fs.readFile(__dirname + "/../" + config.getChaincodeIdFilePath(), (err, data) => {
@@ -159,14 +184,7 @@ const queryChaincode = (enrolledUser, functionToQuery, args) => { // `args` is `
       const queryTx = enrolledUser.query(queryRequest);
 
       queryTx.on('complete', function(results) {
-        console.log("\n *** Query completed successfully ***\n");
-        console.log("\n", results.result.toString('utf-8'));
-        console.log("\n Result of query; results=%j", results);
-
-        console.log("\n\n *** Blockchain Initialization complete *** \n\n")
-
-        return resolve(true);
-
+        return resolve(results);
       });
 
       queryTx.on('error', function(err) {
