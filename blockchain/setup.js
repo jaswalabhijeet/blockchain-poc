@@ -33,7 +33,7 @@ const initBlockchain = () => {
       return blockchainHelpers.deployChaincode(enrolledUser);
     })
     .then((deployedFlag) => {
-      blockchainHelpers.queryChaincode(enrolledUser, ["a"]);
+      blockchainHelpers.queryChaincode(enrolledUser, "readContact", ["a"]);
     })
     .catch((err) => {
       console.log("\n *** ERROR in blockcain `setup.js` ***\n", err);

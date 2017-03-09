@@ -137,7 +137,7 @@ const deployChaincode = (enrolledUser) => {
   });
 };
 
-const queryChaincode = (enrolledUser, args) => { // `args` is `array`
+const queryChaincode = (enrolledUser, functionToQuery, args) => { // `args` is `array`
   let chaincodeID = '';
 
   console.log("\n *** Querying chaincode to test *** \n");
@@ -151,7 +151,7 @@ const queryChaincode = (enrolledUser, args) => { // `args` is `array`
 
       const queryRequest = {
         chaincodeID: data.toString(), // read from the file
-        fcn: "readContact",   // name of `function` parameter in `Query` in chaincode
+        fcn: functionToQuery,   // name of `function` parameter in `Query` in chaincode
         args
       };
 
