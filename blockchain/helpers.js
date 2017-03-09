@@ -72,7 +72,8 @@ const enrollUser = (user) => {
     }
     chain.enroll(user.name, user.secret, function(err, enrolledUser) {
       if (err) {
-        throw Error("\nERROR: failed to enroll user : %s", user.name, err);
+        console.log("\nERROR: failed to enroll user : %s", user.name, err);
+        return reject(err);
       }
 
       console.log("\n *** Enrolled user %s successfully *** \n", user.name);
@@ -119,19 +120,19 @@ const deployChaincode = (enrolledUser) => {
 
         fs.writeFile(__dirname + "/../" + config.getChaincodeIdFilePath(), testChaincodeID, function(err) {
           if (err) {
-            console.log(err);
-            throw err;
+            console.log("\n Error: ", err);
+            return reject(err);
           }
           console.log("\n *** Chaincode ID is written to file *** \n");
           console.log("\n *** Initial setup Completed *** \n");
 
-          resolve(true);
+          return resolve(true);
         });
       });
 
       deployTx.on('error', function(err) {
-        console.log(err);
-        throw err;
+        console.log("\n Error: ", err);
+        return reject(err);
       });
     });
   });
@@ -145,13 +146,13 @@ const queryChaincode = (enrolledUser, functionToQuery, args) => { // `args` is `
   return new Promise((resolve, reject) => {
     fs.readFile(__dirname + "/../" + config.getChaincodeIdFilePath(), (err, data) => {
       if (err) {
-        console.log(err);
-        throw err;
+        console.log("\n Error: ", err);
+        return reject(err);
       }
 
       const queryRequest = {
         chaincodeID: data.toString(), // read from the file
-        fcn: functionToQuery,   // name of `function` parameter in `Query` in chaincode
+        fcn: functionToQuery, // name of `function` parameter in `Query` in chaincode
         args
       };
 
@@ -168,9 +169,9 @@ const queryChaincode = (enrolledUser, functionToQuery, args) => { // `args` is `
 
       });
 
-      queryTx.on('error', function(error) {
-        console.log("\n *** Failed to query chaincode: request=%j, error=%k", queryRequest, error);
-        throw error;
+      queryTx.on('error', function(err) {
+        console.log("\n *** Failed to query chaincode: request=%j, error=%k", queryRequest, err);
+        return reject(err);
       });
     });
   });
