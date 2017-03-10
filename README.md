@@ -9,6 +9,11 @@ git clone https://github.com/aarongoa/blockchain-poc
 cd blockchain-poc
 npm install
 ```
+* Create tmp folder in root of project directory
+```console
+mkdir -p tmp/keyValStore
+```
+
 * Run docker containers
 ```console
 cd setup_files
@@ -28,7 +33,7 @@ go build
   CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 ./chaincode
   ```
 
-Find detailed instructions [here](https://github.com/hyperledger/fabric/blob/v0.6/docs/Setup/Chaincode-setup.md)
+  Find detailed instructions on how to register chaincode [here](https://github.com/hyperledger/fabric/blob/v0.6/docs/Setup/Chaincode-setup.md)
 
 * Start node application
 ```console
