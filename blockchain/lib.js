@@ -28,22 +28,14 @@ const configBlockchain = () => {
   chain = hfc.newChain(config.getChainName());
   chain.setKeyValStore(hfc.newFileKeyValStore(__dirname + "/../" + config.getKeyValStorePath()));
 
-  // TODO: proper error control. Don't do in try catch.
-  // Check if peer has been reg before. only then register
-  try {
-    chain.setMemberServicesUrl("grpc://" + localIP + ":7054");
-    chain.addPeer("grpc://" + localIP + ":7051");
+  chain.setMemberServicesUrl("grpc://" + localIP + ":7054");
+  chain.addPeer("grpc://" + localIP + ":7051");
 
-    chain.setMemberServicesUrl("grpc://" + caAddr);
-    chain.addPeer("grpc://" + peerAddr0);
+  chain.setMemberServicesUrl("grpc://" + caAddr);
 
 
-    console.log("\nSetting membersrvc address to grpc://" + caAddr);
-    console.log("\nSetting peer address to grpc://" + peerAddr0);
-  } catch (err) {
-    console.error(err);
-    console.log("\n *** Peer was already enrolled *** \n");
-  }
+  console.log("\nSetting membersrvc address to grpc://" + caAddr);
+  console.log("\nSetting peer address to grpc://" + peerAddr0);
 
   console.log("\n$SDK_DEPLOY_MODE: " + deployMode);
 
